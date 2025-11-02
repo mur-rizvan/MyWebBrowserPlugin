@@ -128,6 +128,10 @@ bool FWebView2Manager::Initialize()
     // For synchronous approach, we could use a different method with loader DLL
     
     return true;
+#else
+    UE_LOG(LogWebView2Manager, Error, TEXT("WebView2 SDK not available. Please install WebView2 SDK."));
+    return false;
+#endif
 }
 
 void FWebView2Manager::Shutdown()

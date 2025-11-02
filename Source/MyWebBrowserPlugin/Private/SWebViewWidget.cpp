@@ -266,10 +266,8 @@ void SWebViewWidget::InitializeWebView()
                 }
                 return S_OK;
             }).Get());
-#else
-    UE_LOG(LogWebView, Error, TEXT("WebView2 SDK not available. Please install Microsoft Edge WebView2 Runtime and SDK."));
-#endif
-
+#elif MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2
+    UE_LOG(LogWebView, Warning, TEXT("WebView2 SDK not available. WebView2 functionality disabled."));
 #endif
 }
 
