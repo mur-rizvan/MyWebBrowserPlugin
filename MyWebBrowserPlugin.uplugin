@@ -1,0 +1,26 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "My Web Browser Plugin",
+  "Description": "High-performance web browser plugin for UE 5.7 using WebView2 (Windows).",
+  "Category": "Web",
+  "CreatedBy": "mur-rizvan",
+  "CreatedByURL": "https://github.com/mur-rizvan",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": false,
+  "IsBetaVersion": true,
+  "IsExperimentalVersion": true,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "MyWebBrowserPlugin",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms": [ "Win64" ]
+    }
+  ]
+}
+
