@@ -7,17 +7,36 @@
 #include "WebView2Manager.h"
 #include "Windows/WindowsHWrapper.h"
 #include "HAL/PlatformApplicationMisc.h"
-#include "ApplicationCore/Public/Windows/WindowsWindow.h"
-#include "SlateCore/Public/Widgets/Window/SWindow.h"
-#include "Slate/Public/Framework/Application/SlateApplication.h"
+#include "GenericPlatform/GenericWindow.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Widgets/Window/SWindow.h"
 #include <windows.h>
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
-#include <WebView2.h>
-#include <wrl.h>
-#include <comdef.h>
 
-using namespace Microsoft::WRL;
+// WebView2 headers - conditional compilation
+// If WebView2 SDK is not available, we'll use a stub or delay loading
+#ifdef _WIN32
+    // Try to include WebView2.h if available
+    #if __has_include(<WebView2.h>)
+        #include <WebView2.h>
+        #include <wrl.h>
+        #include <comdef.h>
+        using namespace Microsoft::WRL;
+        #define HAS_WEBVIEW2_SDK 1
+    #else
+        // Forward declarations if SDK not available
+        struct ICoreWebView2;
+        struct ICoreWebView2Controller;
+        struct ICoreWebView2Environment;
+        struct ICoreWebView2CreateCoreWebView2ControllerCompletedHandler;
+        namespace Microsoft { namespace WRL { template<typename T> class Callback {}; } }
+        using namespace Microsoft::WRL;
+        #define HAS_WEBVIEW2_SDK 0
+    #endif
+#else
+    #define HAS_WEBVIEW2_SDK 0
+#endif
 #endif
 
 DEFINE_LOG_CATEGORY_STATIC(LogWebView, Log, All);
@@ -130,7 +149,7 @@ void SWebViewWidget::StopLoad()
 
 void SWebViewWidget::InitializeWebView()
 {
-#if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2
+#if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2 && HAS_WEBVIEW2_SDK
     UE_LOG(LogWebView, Log, TEXT("Initializing WebView2..."));
 
     // Get WebView2 manager and ensure it's initialized
@@ -197,6 +216,7 @@ void SWebViewWidget::InitializeWebView()
         return;
     }
 
+#if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2 && HAS_WEBVIEW2_SDK
     // Create WebView2 controller and webview
     Environment->CreateCoreWebView2Controller(
         WebViewHWND,
@@ -246,6 +266,9 @@ void SWebViewWidget::InitializeWebView()
                 }
                 return S_OK;
             }).Get());
+#else
+    UE_LOG(LogWebView, Error, TEXT("WebView2 SDK not available. Please install Microsoft Edge WebView2 Runtime and SDK."));
+#endif
 
 #endif
 }

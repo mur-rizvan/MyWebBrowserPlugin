@@ -1,5 +1,5 @@
 #include "WebViewWidget.h"
-#include "Slate/SWebViewWidget.h"
+#include "SWebViewWidget.h"
 #include "Widgets/DeclarativeSyntaxSupport.h"
 
 UWebViewWidget::UWebViewWidget(const FObjectInitializer& ObjectInitializer)

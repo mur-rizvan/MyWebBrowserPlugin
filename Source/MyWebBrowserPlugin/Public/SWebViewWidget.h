@@ -5,10 +5,12 @@
 #include "Widgets/SCompoundWidget.h"
 
 #if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2
-// Forward declarations
+#include "Windows/WindowsHWrapper.h"
+#include "HAL/PlatformTypes.h"
+
+// Forward declarations for WebView2
 struct ICoreWebView2;
 struct ICoreWebView2Controller;
-#endif
 
 class SWebViewWidget : public SCompoundWidget
 {

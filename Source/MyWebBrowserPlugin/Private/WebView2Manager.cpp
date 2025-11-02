@@ -8,10 +8,23 @@
 #include "HAL/PlatformProcess.h"
 #include "Misc/Paths.h"
 #include <shlwapi.h>
-#include <WebView2.h>
-#include <wrl.h>
 
-using namespace Microsoft::WRL;
+// WebView2 headers - try to include if available
+#if __has_include(<WebView2.h>)
+    #include <WebView2.h>
+    #include <wrl.h>
+    using namespace Microsoft::WRL;
+    #define WEBVIEW2_AVAILABLE 1
+#else
+    // Forward declarations if WebView2.h is not available
+    #pragma message("Warning: WebView2.h not found. Please install WebView2 SDK.")
+    struct ICoreWebView2Environment;
+    struct ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler;
+    namespace Microsoft { namespace WRL { template<typename T> class Callback {}; } }
+    #define WEBVIEW2_AVAILABLE 0
+    // Stub for CreateCoreWebView2EnvironmentWithOptions
+    inline HRESULT CreateCoreWebView2EnvironmentWithOptions(void*, void*, void*, void*) { return E_NOTIMPL; }
+#endif
 
 DEFINE_LOG_CATEGORY_STATIC(LogWebView2Manager, Log, All);
 
@@ -76,6 +89,7 @@ bool FWebView2Manager::Initialize()
     // This uses system WebView2 Runtime if available
     // For custom loader, we'd need WebView2Loader.dll
     
+#if WEBVIEW2_AVAILABLE
     HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(
         nullptr,  // browserExecutableFolder (null = use system runtime)
         nullptr,  // userDataFolder (null = use default)
