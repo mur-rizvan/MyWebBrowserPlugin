@@ -6,7 +6,10 @@
 
 #if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2
 #include "Windows/WindowsHWrapper.h"
-#include "HAL/PlatformTypes.h"
+
+// Forward declarations for Windows handle to avoid including Windows headers here
+struct HWND__;
+typedef HWND__* HWND;
 
 // Forward declarations for WebView2
 struct ICoreWebView2;

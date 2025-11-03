@@ -1,4 +1,5 @@
 using UnrealBuildTool;
+using System.IO;
 
 public class MyWebBrowserPlugin : ModuleRules
 {
@@ -29,13 +30,20 @@ public class MyWebBrowserPlugin : ModuleRules
             PublicDefinitions.Add("MYWEBBROWSER_WINDOWS=1");
             PublicDefinitions.Add("MYWEBBROWSER_WEBVIEW2=1");
             
-            // WebView2 - используем системный runtime или loader
-            // Для статической линковки нужен WebView2LoaderStatic.lib
-            // Для динамической линковки используем CreateCoreWebView2EnvironmentWithOptions
-            
-            // Если используете статический loader, раскомментируйте:
-            // string WebView2LibPath = ModuleDirectory + "/ThirdParty/WebView2/lib/Win64/";
-            // PublicAdditionalLibraries.Add(WebView2LibPath + "WebView2LoaderStatic.lib");
+            // WebView2 SDK paths inside the plugin
+            string WebView2Dir = Path.Combine(ModuleDirectory, "ThirdParty", "WebView2");
+            string WebView2Include = Path.Combine(WebView2Dir, "include");
+            string WebView2Lib = Path.Combine(WebView2Dir, "lib", "Win64");
+
+            if (Directory.Exists(WebView2Include))
+            {
+                PublicIncludePaths.Add(WebView2Include);
+            }
+
+            if (Directory.Exists(WebView2Lib))
+            {
+                PublicAdditionalLibraries.Add(Path.Combine(WebView2Lib, "WebView2LoaderStatic.lib"));
+            }
             
             // Добавляем необходимые библиотеки Windows
             PublicSystemLibraries.Add("shlwapi.lib");
