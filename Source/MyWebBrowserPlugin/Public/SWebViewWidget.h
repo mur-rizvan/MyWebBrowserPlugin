@@ -4,16 +4,18 @@
 #include "Widgets/DeclarativeSyntaxSupport.h"
 #include "Widgets/SCompoundWidget.h"
 
+// Windows/WebView2 declarations used only on Windows
 #if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2
-#include "Windows/WindowsHWrapper.h"
+    #include "Windows/WindowsHWrapper.h"
 
-// Forward declarations for Windows handle to avoid including Windows headers here
-struct HWND__;
-typedef HWND__* HWND;
+    // Safe forward declaration for HWND without including windows.h here
+    struct HWND__;
+    typedef HWND__* HWND;
 
-// Forward declarations for WebView2
-struct ICoreWebView2;
-struct ICoreWebView2Controller;
+    // Forward declarations for WebView2 interfaces (no heavy headers in .h)
+    struct ICoreWebView2;
+    struct ICoreWebView2Controller;
+#endif
 
 class SWebViewWidget : public SCompoundWidget
 {
@@ -43,8 +45,8 @@ public:
     void StopLoad();
 
 protected:
-    virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, 
-        const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, 
+    virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
+        const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
         int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
     virtual FVector2D ComputeDesiredSize(float) const override;
@@ -55,14 +57,13 @@ private:
     void ResizeWebView();
 
 #if MYWEBBROWSER_WINDOWS && MYWEBBROWSER_WEBVIEW2
-    ICoreWebView2Controller* WebViewController;
-    ICoreWebView2* WebView;
-    HWND WebViewHWND;
+    ICoreWebView2Controller* WebViewController = nullptr;
+    ICoreWebView2* WebView = nullptr;
+    HWND WebViewHWND = nullptr;
 #endif
 
     FString CurrentURL;
     FString InitialURL;
-    bool bTransparencyEnabled;
-    mutable FVector2D WidgetSize;
+    bool bTransparencyEnabled = false;
+    mutable FVector2D WidgetSize = FVector2D(800.0f, 600.0f);
 };
-
